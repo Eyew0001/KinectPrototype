@@ -2,7 +2,7 @@
     "name": "webclient-express-server",
     "version": "0.0.20",
     "description": "show skeletons in browser",
-    "main": "index.js",
+    "main": "broadcast.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },

@@ -13,6 +13,7 @@ var kinect = new Kinect2();
 // Next, we call kinect.open() and in the same line we are also waiting for the response 
 // to be true in case powering up and accessing the Kinect sensor was successful:
 if (kinect.open()) {
+    app.use(express.static('public'));
 
     // Inside this condition we start our server:
     server.listen(8000);
@@ -21,8 +22,9 @@ if (kinect.open()) {
 
     // The following expression will serve the index.html file inside the public folder. 
     app.get('/', function (req, res) {
-        res.sendFile(__dirname + '/public/index.html');
+        res.sendFile(__dirname + '/index.html');
     });
+
 
     // responsible for actually listening for received bodyFrames from the Kinect sensor 
     // which is one frame worth of skeleton data formatted into JSON
