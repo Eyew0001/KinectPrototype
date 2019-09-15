@@ -7,6 +7,14 @@ express = require('express'),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server);
 
+    var port = process.env.PORT || 8000;
+
+    //local
+    //var server = app.listen(80);
+    
+    //heroku
+    // var server = app.listen(port);
+
 // We also need an instance of the Kinect 2 library:
 var kinect = new Kinect2();
 
@@ -16,7 +24,7 @@ if (kinect.open()) {
     app.use(express.static('public'));
 
     // Inside this condition we start our server:
-    server.listen(8000);
+    server.listen(port);
     console.log('Server listening on port 8000');
     // console.log('Point your browser to http://www.webondevices.com');
 
