@@ -8,11 +8,16 @@ function setup() {
     ctx = createCanvas(windowWidth, windowHeight);
     background(0);
     //    ctx = document.getElementById('canvas').getContext('2d');
-
+    // frameRate();
 }
 var allParticles = [];
 var maxLevel = 5;
 var useFill = false;
+
+var token = 0.5;
+var num = Math.floor(Math.random() * (40 - 360 + 1)) + 360;
+var num1 = Math.floor(Math.random() * (30 - 360 + 1)) + 360;
+var num2 = Math.floor(Math.random() * (50 - 360 + 1)) + 360;
 
 function Particle(x, y, level) {
 
@@ -43,6 +48,26 @@ function Particle(x, y, level) {
 }
 
 function draw() {
+    // console.log(num);
+    if (num < 255) {
+        num += token;
+    }
+    if (num > 240 || num < 40) {
+        token = -token;
+    }
+    if (num1 < 255) {
+        num1 += token;
+    }
+    if (num1 > 240 || num1 < 40) {
+        token = -token;
+    }
+    if (num2 < 255) {
+        num += token;
+    }
+    if (num2 > 240 || num2 < 40) {
+        token = -token;
+    }
+    // console.log(frameCount);
     // interpretData();
     // if (frameCount % 5 == 0) {
     // ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -101,7 +126,7 @@ function draw() {
             } else {
                 noFill();
 
-                stroke(150, 360, 360);
+                stroke(num + p1.life * 1.5, num1 + p1.life * 1.5, num2 + p1.life * 1.5);
 
             }
 
@@ -111,17 +136,12 @@ function draw() {
         }
     }
 }
-var rightHX = [];
-var rightHY = [];
 
 
 var head = [];
-var neck = [];
 var spine = [];
 var rightH = [];
 var leftH = [];
-var rightE = [];
-var leftE = [];
 var rightHip = [];
 var leftHip = [];
 
@@ -146,23 +166,26 @@ function interpretData(bodyFrame) {
     // ctx.fillStyle = "red";
     for (var i = 0; i < bodyFrame.bodies.length; i++) {
         if (bodyFrame.bodies[i].tracked == true) {
-            
+
             // console.log('tracked');
             // for (var j = 0; j < bodyFrame.bodies[i].joints.length; j++) {
-                // console.log("sds+" + joint);
-                for (var j = 0; j < jointNums.length; j++) {
-                    
-                var joint = bodyFrame.bodies[i].joints[jointNums[j]];
-                
-               
+            // console.log("sds+" + joint);
+            for (var j = 0; j < jointNums.length; j++) {
 
-                jointsCombo[j].push(Math.round(joint.depthX * 100) / 100);
-                jointsCombo[j].push(Math.round(joint.depthY * 100) / 100);
-                // console.log(joint);
+                var joint = bodyFrame.bodies[i].joints[jointNums[j]];
+
+
+
+                jointsCombo[j][0].push(Math.round(joint.depthX * 10) / 10);
+                jointsCombo[j][1].push(Math.round(joint.depthY * 10) / 10);
+                // console.log(jointsCombo[j][0]);
+                // console.log(jointsCombo[j][1]);
+
                 fill('green');
                 ellipse(joint.depthX * 400, joint.depthY * 400, 20, 20);
-                
-                if (jointsCombo[0][rightH.length - 1] != rightH[0][rightH.length - 2] && rightH[0][rightH.length - 1] != rightH[0][rightH.length - 2]) {
+                var temp = jointsCombo[j]
+                // if (temp[0][temp.length-1] != temp[0][temp.length-2] && temp[1][temp.length-1] != temp[1][temp.length-2]) {
+                if (frameCount % 10 == 0) {
                     allParticles.push(new Particle(joint.depthX * 400, joint.depthY * 400, 3));
                 }
             }
