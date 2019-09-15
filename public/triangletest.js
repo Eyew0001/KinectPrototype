@@ -2,6 +2,7 @@ var ctx;
 
 function setup() {
     var socket = io.connect('http://localhost:8000');
+    
     //listens for incoming messages named “bodyFrame”.
     socket.on('bodyFrame', interpretData);
     ctx = createCanvas(windowWidth, windowHeight);
