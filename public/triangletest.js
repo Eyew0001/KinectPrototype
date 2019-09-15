@@ -1,8 +1,8 @@
 var ctx;
 
 function setup() {
-    var socket = io.connect('http://localhost:8000');
-    
+    var socket = io.connect('192.168.86.115:8000');
+
     //listens for incoming messages named “bodyFrame”.
     socket.on('bodyFrame', interpretData);
     ctx = createCanvas(windowWidth, windowHeight);
@@ -111,16 +111,32 @@ function draw() {
         }
     }
 }
+var rightHX = [];
+var rightHY = [];
+
+
 var head = [];
 var neck = [];
 var spine = [];
-var rightHX = [];
-var rightHY = [];
-var leftHX = [];
-var leftHY = [];
+var rightH = [];
+var leftH = [];
+var rightE = [];
+var leftE = [];
+var rightHip = [];
+var leftHip = [];
 
-// var right = [][];
-var jointsCombo = [];
+
+var jointsCombo = [head, spine, rightH, leftH, rightHip, leftHip];
+for (i = 0; i < jointsCombo.length; i++) {
+    for (j = 0; j < 2; j++) {
+        var temp = jointsCombo[i];
+        temp[j] = [];
+    }
+}
+
+console.log(jointsCombo);
+
+var jointNums = [3, 1, 11, 7, 16, 12];
 
 //Inside the interpretData function we can pass in the a variable which will contain the received
 // message, which is the JSON formatted skeleton data in our case:
@@ -130,16 +146,23 @@ function interpretData(bodyFrame) {
     // ctx.fillStyle = "red";
     for (var i = 0; i < bodyFrame.bodies.length; i++) {
         if (bodyFrame.bodies[i].tracked == true) {
+            
             // console.log('tracked');
-            for (var j = 0; j < bodyFrame.bodies[i].joints.length; j++) {
-                var joint = bodyFrame.bodies[i].joints[11];
+            // for (var j = 0; j < bodyFrame.bodies[i].joints.length; j++) {
+                // console.log("sds+" + joint);
+                for (var j = 0; j < jointNums.length; j++) {
+                    
+                var joint = bodyFrame.bodies[i].joints[jointNums[j]];
+                
+               
 
-                rightHX.push(Math.round(joint.depthX * 100) / 100);
-                rightHY.push(Math.round(joint.depthY * 100) / 100);
+                jointsCombo[j].push(Math.round(joint.depthX * 100) / 100);
+                jointsCombo[j].push(Math.round(joint.depthY * 100) / 100);
+                // console.log(joint);
                 fill('green');
                 ellipse(joint.depthX * 400, joint.depthY * 400, 20, 20);
-                if (rightHX[rightHX.length - 1] != rightHX[rightHX.length - 2] && rightHY[rightHY.length - 1] != rightHY[rightHY.length - 2]) {
-
+                
+                if (jointsCombo[0][rightH.length - 1] != rightH[0][rightH.length - 2] && rightH[0][rightH.length - 1] != rightH[0][rightH.length - 2]) {
                     allParticles.push(new Particle(joint.depthX * 400, joint.depthY * 400, 3));
                 }
             }
