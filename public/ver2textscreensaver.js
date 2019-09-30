@@ -1,7 +1,9 @@
 var ctx;
 
+var trackedArray = [];
+
 function setup() {
-    var socket = io.connect('192.168.86.115:8000');
+    var socket = io.connect('localhost:8000');
     // var socket = io.connect('10.17.58.115:8000');
     //listens for incoming messages named “bodyFrame”.
     socket.on('bodyFrame', interpretData);
@@ -46,8 +48,12 @@ function Particle(x, y, level) {
         }
     }
 }
+var bodycount = 0;
 
 function draw() {
+    console.log(trackedArray.length);
+
+
     // console.log(num);
     if (num < 255) {
         num += token;
@@ -73,6 +79,7 @@ function draw() {
     // ctx.clearRect(0, 0, canvas.width, canvas.height);
     fill(0, 30);
     rect(0, 0, width, height);
+
 
     // }
     noStroke();
@@ -135,18 +142,20 @@ function draw() {
                 p3.pos.x, p3.pos.y);
         }
     }
+    if (trackedArray.length == 0) {
+        console.log("length is 0");
+        stroke(360, 360, 360);
+        textStyle(BOLD);
+        textSize(40);
+        text("Wave your hands to begin", 50, height / 2);
+    }
 }
 
-
-var head = [];
-var spine = [];
 var rightH = [];
 var leftH = [];
-var rightHip = [];
-var leftHip = [];
 
 
-var jointsCombo = [head, spine, rightH, leftH, rightHip, leftHip];
+var jointsCombo = [rightH, leftH];
 for (i = 0; i < jointsCombo.length; i++) {
     for (j = 0; j < 2; j++) {
         var temp = jointsCombo[i];
@@ -156,16 +165,26 @@ for (i = 0; i < jointsCombo.length; i++) {
 
 console.log(jointsCombo);
 
-var jointNums = [3, 1, 11, 7, 16, 12];
+var jointNums = [11, 7];
 
 //Inside the interpretData function we can pass in the a variable which will contain the received
 // message, which is the JSON formatted skeleton data in our case:
 function interpretData(bodyFrame) {
-    //console.log(bodyFrame);      
+
+    console.log(trackedArray);
 
     // ctx.fillStyle = "red";
     for (var i = 0; i < bodyFrame.bodies.length; i++) {
+
         if (bodyFrame.bodies[i].tracked == true) {
+            if (!trackedArray.includes(i)) {
+                trackedArray.push(i);
+                console.log("pushed: " + i);
+            }
+
+
+            console.log(trackedArray);
+
 
             // console.log('tracked');
             // for (var j = 0; j < bodyFrame.bodies[i].joints.length; j++) {
@@ -174,24 +193,32 @@ function interpretData(bodyFrame) {
 
                 var joint = bodyFrame.bodies[i].joints[jointNums[j]];
 
-
-
                 jointsCombo[j][0].push(Math.round(joint.depthX * 10) / 10);
                 jointsCombo[j][1].push(Math.round(joint.depthY * 10) / 10);
                 // console.log(jointsCombo[j][0]);
                 // console.log(jointsCombo[j][1]);
 
-                fill('green');
+                fill('pink');
                 noStroke();
-                ellipse(joint.depthX * 400 + 500, joint.depthY * 400 + 100, 20, 20);
+                ellipse(joint.depthX * 900 + 200, joint.depthY * 500, 20, 20);
                 var temp = jointsCombo[j]
                 // if (temp[0][temp.length-1] != temp[0][temp.length-2] && temp[1][temp.length-1] != temp[1][temp.length-2]) {
                 if (frameCount % 8 == 0) {
-                    allParticles.push(new Particle(joint.depthX * 400+ 500, joint.depthY * 400+ 100, 3));
+                    allParticles.push(new Particle(joint.depthX * 900 + 200, joint.depthY * 500, 3));
                 }
             }
+        } else {
+            var index = trackedArray.indexOf(parseInt(i));
+            console.log("i: " + i);
+            console.log("else track :" + trackedArray);
+            console.log("index: " + index);
+            if (index !== -1) {
+                trackedArray.splice(index, 1);
+            }
         }
+
     }
+
 
 
 }

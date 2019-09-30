@@ -2,7 +2,7 @@ var ctx;
 
 function setup() {
     var socket = io.connect('192.168.86.115:8000');
-    // var socket = io.connect('10.17.58.115:8000');
+    // var socket = io.connect('10.17.57.117:8000');
     //listens for incoming messages named “bodyFrame”.
     socket.on('bodyFrame', interpretData);
     ctx = createCanvas(windowWidth, windowHeight);
@@ -165,32 +165,35 @@ function interpretData(bodyFrame) {
 
     // ctx.fillStyle = "red";
     for (var i = 0; i < bodyFrame.bodies.length; i++) {
-        if (bodyFrame.bodies[i].tracked == true) {
+        if (i % 2 == 0) {
+            if (bodyFrame.bodies[i].tracked == true) {
 
-            // console.log('tracked');
-            // for (var j = 0; j < bodyFrame.bodies[i].joints.length; j++) {
-            // console.log("sds+" + joint);
-            for (var j = 0; j < jointNums.length; j++) {
-
-                var joint = bodyFrame.bodies[i].joints[jointNums[j]];
-
-
-
-                jointsCombo[j][0].push(Math.round(joint.depthX * 10) / 10);
-                jointsCombo[j][1].push(Math.round(joint.depthY * 10) / 10);
-                // console.log(jointsCombo[j][0]);
-                // console.log(jointsCombo[j][1]);
-
-                fill('green');
-                noStroke();
-                ellipse(joint.depthX * 400 + 500, joint.depthY * 400 + 100, 20, 20);
-                var temp = jointsCombo[j]
-                // if (temp[0][temp.length-1] != temp[0][temp.length-2] && temp[1][temp.length-1] != temp[1][temp.length-2]) {
-                if (frameCount % 8 == 0) {
-                    allParticles.push(new Particle(joint.depthX * 400+ 500, joint.depthY * 400+ 100, 3));
+                // console.log('tracked');
+                // for (var j = 0; j < bodyFrame.bodies[i].joints.length; j++) {
+                // console.log("sds+" + joint);
+                for (var j = 0; j < jointNums.length; j++) {
+    
+                    var joint = bodyFrame.bodies[i].joints[jointNums[j]];
+    
+    
+    
+                    jointsCombo[j][0].push(Math.round(joint.depthX * 10) / 10);
+                    jointsCombo[j][1].push(Math.round(joint.depthY * 10) / 10);
+                    // console.log(jointsCombo[j][0]);
+                    // console.log(jointsCombo[j][1]);
+    
+                    fill('green');
+                    noStroke();
+                    ellipse(joint.depthX * 400 + 500, joint.depthY * 400 + 100, 20, 20);
+                    var temp = jointsCombo[j]
+                    // if (temp[0][temp.length-1] != temp[0][temp.length-2] && temp[1][temp.length-1] != temp[1][temp.length-2]) {
+                    if (frameCount % 8 == 0) {
+                        allParticles.push(new Particle(joint.depthX * 400+ 500, joint.depthY * 400+ 100, 3));
+                    }
                 }
             }
         }
+        
     }
 
 
