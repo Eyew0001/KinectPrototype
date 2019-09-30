@@ -1,7 +1,7 @@
 var ctx;
 
 function setup() {
-    var socket = io.connect('192.168.86.115:8000');
+    var socket = io.connect('localhost:8000');
     // var socket = io.connect('10.17.58.115:8000');
     //listens for incoming messages named “bodyFrame”.
     socket.on('bodyFrame', interpretData);
