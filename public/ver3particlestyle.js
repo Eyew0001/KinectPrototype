@@ -41,12 +41,14 @@ function draw() {
     noStroke();
 
     if (trackedArray.length == 0) {
+        particleSmoke = [];
         background(0,30);
         console.log("length is 0");
         stroke(360, 360, 360);
         textStyle(BOLD);
-        textSize(40);
-        text("Wave your hands to begin", 50, height / 2);
+        fill("white");
+        textSize(60);
+        text("Wave your hands to begin", width/2-400, height / 2);
     }
 
 
@@ -120,11 +122,10 @@ class Particle {
         this.vy = random(0, -1);
         this.alpha = 255;
         this.accel = random(0, 1);
-       
+        this.radius = random(8,20); 
         this.r = red;
         this.g = green;
         this.b = blue;
-        console.log(this.r);
 
     }
 
@@ -136,7 +137,9 @@ class Particle {
         this.x += this.vx * this.accel;
         this.y += this.vy * this.accel;
         this.alpha -= 5;
-
+        if (this.radius > 0) {
+            this.radius -= 0.08;
+        }
         this.r += random(-8, 8);
         this.g += random(-8, 8);
         this.b += random(-8, 8);
@@ -145,7 +148,7 @@ class Particle {
     show() {
         noStroke();
         fill(this.r, this.g, this.b, this.alpha);
-        ellipse(this.x, this.y, random(8, 16));
+        ellipse(this.x, this.y, this.radius);
     }
 
 }
