@@ -4,27 +4,9 @@ var trackedArray = []; // stores index number of bodies that are tracked
 
 var colourArray = []; // stores rgb values that are randomised for each person
 
-
-/* just realised don't need to store position values at all
-
-var rightH = []; // declare array for storing positions of rightHand
-var leftH = []; // declare array for storing positions of leftHand
-
-var jointsCombo = [rightH, leftH]; // create double array for each hand for storing x and y position
-for (i = 0; i < jointsCombo.length; i++) {
-    for (j = 0; j < 2; j++) {
-        var temp = jointsCombo[i];
-        temp[j] = [];
-    }
-}
-
-// console.log(jointsCombo);
-
-*/
-
 var jointNums = [11, 7]; // index number of right and left hand according to kinect documentation
 
-var particleSmoke = []; // declare array for storing particles
+var strokeLineArray = []; // declare array for storing particles
 
 var redLightTimeReset = 100; // time left for red light
 
@@ -46,12 +28,6 @@ function setup() {
 }
 
 function draw() {
-
-
-
-    // console.log(trackedArray.length);
-    // fill(0, 50);
-    // rect(0, 0, width, height);
     noStroke();
 
     // black rectangle background for text so text is not affected by the fading background
@@ -73,7 +49,7 @@ function draw() {
 
     // if no body is in view then show screensaver text
     if (trackedArray.length == 0) {
-        particleSmoke = [];
+        strokeLineArray = [];
         background(0, 30);
         // console.log("length is 0");
         // stroke(360, 360, 360);
@@ -140,24 +116,13 @@ function interpretData(bodyFrame) {
 
                     var joint = bodyFrame.bodies[i].joints[jointNums[j]]; // get index number of joint from the joint array
 
-                    /* just realised don't need to store position values
-                    jointsCombo[j][0].push(Math.round(joint.depthX * 10) / 10);
-                    jointsCombo[j][1].push(Math.round(joint.depthY * 10) / 10);
-
-                    jointsCombo[j][0].splice(0, 1);
-                    jointsCombo[j][1].splice(0, 1);
-
-                    console.log(jointsCombo[j][0].length);
-                    */
-
-
                     fill('pink');
                     noStroke();
                     ellipse(joint.depthX * 900 + 200, joint.depthY * 500, 20, 20);
                     // var temp = jointsCombo[j]
                     var index = trackedArray.indexOf(parseInt(i));
 
-                    particleDraw(joint.depthX, joint.depthY, colourArray[index * 3], colourArray[(index * 3) + 1], colourArray[(index * 3) + 2]);
+                   strokeDraw(joint.depthX, joint.depthY, colourArray[index * 3], colourArray[(index * 3) + 1], colourArray[(index * 3) + 2]);
                     // console.log("colour " + colourArray[index*3]);
                 }
 
@@ -179,8 +144,7 @@ function interpretData(bodyFrame) {
 
 }
 
-/* credits to coding train */
-class Particle {
+class StrokeLines {
 
     constructor(jointX, jointY, red, green, blue) {
         this.x = jointX * 900 + 200;
@@ -193,7 +157,9 @@ class Particle {
         this.r = red;
         this.g = green;
         this.b = blue;
-
+        this.x1 = this.x;
+        this.y1 = this.y;
+        this.sWeight= random(-10,10);
     }
 
     finished() {
@@ -201,8 +167,11 @@ class Particle {
     }
 
     update() {
-        this.x += this.vx * this.accel;
-        this.y += this.vy * this.accel;
+        // this.sWeight += random(-25,25);
+        this.x1 += sin(0);
+        this.y1 += random(-10,10);
+        // this.x += this.vx * this.accel;
+        // this.y += this.vy * this.accel;
         this.alpha -= 5;
         if (this.radius > 0) {
             this.radius -= 0.08;
@@ -213,25 +182,26 @@ class Particle {
     }
 
     show() {
-        noStroke();
-        fill(this.r, this.g, this.b, this.alpha);
-        ellipse(this.x, this.y, this.radius);
+        strokeWeight(this.sWeight);
+        // noStroke();
+        stroke(this.r, this.g, this.b, this.alpha);
+        line(this.x, this.y, this.x1, this.y1,);
     }
 
 }
 
-function particleDraw(jointX, jointY, red, green, blue) {
+function strokeDraw(jointX, jointY, red, green, blue) {
     background(0, 20);
     for (let i = 0; i < 1; i++) { //how many particles at one time
-        let p = new Particle(jointX, jointY, red, green, blue);
-        particleSmoke.push(p);
+        let p = new StrokeLines(jointX, jointY, red, green, blue);
+        strokeLineArray.push(p);
     }
-    for (let i = particleSmoke.length - 1; i >= 0; i--) {
-        particleSmoke[i].update();
-        particleSmoke[i].show();
-        if (particleSmoke[i].finished()) {
+    for (let i = strokeLineArray.length - 1; i >= 0; i--) {
+        strokeLineArray[i].update();
+        strokeLineArray[i].show();
+        if (strokeLineArray[i].finished()) {
             // remove this particle
-            particleSmoke.splice(i, 2);
+            strokeLineArray.splice(i, 2);
         }
     }
 }

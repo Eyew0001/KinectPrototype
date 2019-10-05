@@ -26,7 +26,7 @@ var jointNums = [11, 7]; // index number of right and left hand according to kin
 
 var particleSmoke = []; // declare array for storing particles
 
-var redLightTimeReset = 100; // time left for red light
+var redLightTimeReset = 5; // time left for red light
 
 var greenLightTimeReset = 4; // time left for green light
 
@@ -47,11 +47,81 @@ function setup() {
 
 function draw() {
 
+    if (num < 255) {
+        num += token;
+    }
+    if (num > 240 || num < 40) {
+        token = -token;
+    }
+    if (num1 < 255) {
+        num1 += token;
+    }
+    if (num1 > 240 || num1 < 40) {
+        token = -token;
+    }
+    if (num2 < 255) {
+        num += token;
+    }
+    if (num2 > 240 || num2 < 40) {
+        token = -token;
+    }
+
+    fill(0, 30);
+    rect(0, 0, width, height);
+    for (var i = allTriangleLines.length - 1; i > -1; i--) {
+        allTriangleLines[i].move();
+
+        if (allTriangleLines[i].vel.mag() < 0.01) {
+            allTriangleLines.splice(i, 1);
+        }
+    }
+
+    if (allTriangleLines.length > 0) {
+        // Run script to get points to create triangles with.
+        data = Delaunay.triangulate(allTriangleLines.map(function (pt) {
+            return [pt.pos.x, pt.pos.y];
+        }));
+
+        strokeWeight(1);
+
+        // Display triangles individually.
+        for (var i = 0; i < data.length; i += 3) {
+            // Collect TriangleLines that make this triangle.
+            var p1 = allTriangleLines[data[i]];
+            var p2 = allTriangleLines[data[i + 1]];
+            var p3 = allTriangleLines[data[i + 2]];
+
+            // Don't draw triangle if its area is too big.
+            var distThresh = 75;
+
+            if (dist(p1.pos.x, p1.pos.y, p2.pos.x, p2.pos.y) > distThresh) {
+                continue;
+            }
+
+            if (dist(p2.pos.x, p2.pos.y, p3.pos.x, p3.pos.y) > distThresh) {
+                continue;
+            }
+
+            if (dist(p1.pos.x, p1.pos.y, p3.pos.x, p3.pos.y) > distThresh) {
+                continue;
+            }
 
 
-    // console.log(trackedArray.length);
-    // fill(0, 50);
-    // rect(0, 0, width, height);
+
+            // Base its hue by the TriangleLine's life.
+            
+                noFill();
+
+                stroke(num + p1.life * 1.5, num1 + p1.life * 1.5, num2 + p1.life * 1.5);
+
+            
+
+            triangle(p1.pos.x, p1.pos.y,
+                p2.pos.x, p2.pos.y,
+                p3.pos.x, p3.pos.y);
+        }
+    }
+
     noStroke();
 
     // black rectangle background for text so text is not affected by the fading background
@@ -157,8 +227,27 @@ function interpretData(bodyFrame) {
                     // var temp = jointsCombo[j]
                     var index = trackedArray.indexOf(parseInt(i));
 
-                    particleDraw(joint.depthX, joint.depthY, colourArray[index * 3], colourArray[(index * 3) + 1], colourArray[(index * 3) + 2]);
-                    // console.log("colour " + colourArray[index*3]);
+                    console.log(i);
+
+                    if (i < 4) {
+                        particleDraw(joint.depthX, joint.depthY, colourArray[index * 3], colourArray[(index * 3) + 1], colourArray[(index * 3) + 2]);
+                        // console.log("colour " + colourArray[index*3]);
+                    
+                    }
+                    else {
+                        if (frameCount % 1.5 == 0) {
+                            allTriangleLines.push(new TriangleLine(joint.depthX * 900+ 200, joint.depthY * 500, 3));
+                            
+                        }
+                        if (allTriangleLines.length > 30) {
+                            allTriangleLines.splice(0,2);
+                        }
+                    }
+
+              
+                
+                
+                
                 }
 
             } else {
@@ -232,6 +321,43 @@ function particleDraw(jointX, jointY, red, green, blue) {
         if (particleSmoke[i].finished()) {
             // remove this particle
             particleSmoke.splice(i, 2);
+        }
+    }
+}
+
+
+
+var allTriangleLines = [];
+var maxLevel = 5;
+var token = 0.5;
+var num = Math.floor(Math.random() * (40 - 360 + 1)) + 360;
+var num1 = Math.floor(Math.random() * (30 - 360 + 1)) + 360;
+var num2 = Math.floor(Math.random() * (50 - 360 + 1)) + 360;
+
+function TriangleLine(x, y, level) {
+
+    this.level = level;
+    this.life = 0;
+
+    this.pos = new p5.Vector(x, y);
+    this.vel = p5.Vector.random2D();
+    this.vel.mult(map(this.level, 0, maxLevel, 5, 2));
+
+    this.move = function () {
+        this.life++;
+
+        // Add friction.
+        this.vel.mult(0.9);
+
+        this.pos.add(this.vel);
+
+        // Spawn a new TriangleLine if conditions are met.
+        if (this.life % 10 == 0) {
+            if (this.level > 0) {
+                this.level -= 1;
+                var newTriangleLine = new TriangleLine(this.pos.x, this.pos.y, this.level - 1);
+                allTriangleLines.push(newTriangleLine);
+            }
         }
     }
 }

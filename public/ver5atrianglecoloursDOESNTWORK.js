@@ -4,35 +4,125 @@ var trackedArray = []; // stores index number of bodies that are tracked
 
 var colourArray = []; // stores rgb values that are randomised for each person
 
-
-/* just realised don't need to store position values at all
-
-var rightH = []; // declare array for storing positions of rightHand
-var leftH = []; // declare array for storing positions of leftHand
-
-var jointsCombo = [rightH, leftH]; // create double array for each hand for storing x and y position
-for (i = 0; i < jointsCombo.length; i++) {
-    for (j = 0; j < 2; j++) {
-        var temp = jointsCombo[i];
-        temp[j] = [];
-    }
-}
-
-// console.log(jointsCombo);
-
-*/
-
 var jointNums = [11, 7]; // index number of right and left hand according to kinect documentation
 
-var particleSmoke = []; // declare array for storing particles
-
-var redLightTimeReset = 100; // time left for red light
+var redLightTimeReset = 5; // time left for red light
 
 var greenLightTimeReset = 4; // time left for green light
 
 var redLightTime = redLightTimeReset; // variable used to reger to red light time left
 
 var greenLightTime = greenLightTimeReset; // variable used to reger to green light time left
+
+var allTriangleLines = [];
+var maxLevel = 5;
+var useFill = false;
+
+var token = 0.5;
+var num = Math.floor(Math.random() * (40 - 360 + 1)) + 360;
+var num1 = Math.floor(Math.random() * (30 - 360 + 1)) + 360;
+var num2 = Math.floor(Math.random() * (50 - 360 + 1)) + 360;
+
+class TriangleLine {
+    constructor(x, y, level, red, blue, green) {
+        this.level = level;
+        this.life = 0;
+
+        this.pos = new p5.Vector(x, y);
+        this.vel = p5.Vector.random2D();
+        this.vel.mult(map(this.level, 0, maxLevel, 5, 2));
+
+        this.r = red;
+        this.g = green;
+        this.b = blue;
+
+    }
+
+    update() {
+        if (this.r < 255) {
+            this.r += 0.5;
+        }
+        if (this.r > 240 || this.r < 40) {
+            this.r -= 0.5;
+        }
+        if (this.g < 255) {
+            this.g += 0.5;
+        }
+        if (this.g > 240 || this.g < 40) {
+            this.g -= 0.5;
+        }
+        if (this.b < 255) {
+            this.b += 0.5;
+        }
+        if (this.b > 240 || this.b < 40) {
+            this.b -= 0.5;
+        }
+
+        this.life++;
+
+        // Add friction.
+        this.vel.mult(0.9);
+
+        this.pos.add(this.vel);
+
+        // Spawn a new TriangleLine if conditions are met.
+        if (this.life % 10 == 0) {
+            if (this.level > 0) {
+                this.level -= 1;
+                var newTriangleLine = new TriangleLine(this.pos.x, this.pos.y, this.level - 1);
+                allTriangleLines.push(newTriangleLine);
+            }
+        }
+
+    }
+
+    show() {
+        if (allTriangleLines.length > 0) {
+            var data;
+            // Run script to get points to create triangles with.
+            data = Delaunay.triangulate(allTriangleLines.map(function (pt) {
+                return [pt.pos.x, pt.pos.y];
+            }));
+    
+            strokeWeight(1);
+    
+            // Display triangles individually.
+            for (var i = 0; i < data.length; i += 3) {
+                // Collect TriangleLines that make this triangle.
+                var p1 = allTriangleLines[data[i]];
+                var p2 = allTriangleLines[data[i + 1]];
+                var p3 = allTriangleLines[data[i + 2]];
+    
+                // Don't draw triangle if its area is too big.
+                var distThresh = 75;
+    
+                if (dist(p1.pos.x, p1.pos.y, p2.pos.x, p2.pos.y) > distThresh) {
+                    continue;
+                }
+    
+                if (dist(p2.pos.x, p2.pos.y, p3.pos.x, p3.pos.y) > distThresh) {
+                    continue;
+                }
+    
+                if (dist(p1.pos.x, p1.pos.y, p3.pos.x, p3.pos.y) > distThresh) {
+                    continue;
+                }
+    
+                // Base its hue by the TriangleLine's life.
+    
+                noFill();
+    
+                stroke(200,200,200 );
+    
+                triangle(p1.pos.x, p1.pos.y,
+                    p2.pos.x, p2.pos.y,
+                    p3.pos.x, p3.pos.y);
+            }
+        }
+    }
+
+}
+
 
 
 function setup() {
@@ -45,7 +135,17 @@ function setup() {
 
 }
 
+
+
+
 function draw() {
+
+   
+
+    // fill(0, 30);
+    // rect(0, 0, width, height);
+  
+   
 
 
 
@@ -73,7 +173,7 @@ function draw() {
 
     // if no body is in view then show screensaver text
     if (trackedArray.length == 0) {
-        particleSmoke = [];
+        TriangleLineSmoke = [];
         background(0, 30);
         // console.log("length is 0");
         // stroke(360, 360, 360);
@@ -157,8 +257,15 @@ function interpretData(bodyFrame) {
                     // var temp = jointsCombo[j]
                     var index = trackedArray.indexOf(parseInt(i));
 
-                    particleDraw(joint.depthX, joint.depthY, colourArray[index * 3], colourArray[(index * 3) + 1], colourArray[(index * 3) + 2]);
-                    // console.log("colour " + colourArray[index*3]);
+                    if (frameCount % 1.5 == 0) {
+                        TriangleDraw(joint.depthX * 900 + 200, joint.depthY * 500, 3, colourArray[index * 3], colourArray[(index * 3) + 1], colourArray[(index * 3) + 2])
+                       
+
+                    }
+                    if (allTriangleLines.length > 30) {
+                        allTriangleLines.splice(0, 2);
+                    }
+
                 }
 
             } else {
@@ -179,62 +286,21 @@ function interpretData(bodyFrame) {
 
 }
 
-/* credits to coding train */
-class Particle {
-
-    constructor(jointX, jointY, red, green, blue) {
-        this.x = jointX * 900 + 200;
-        this.y = jointY * 500;
-        this.vx = random(-1, 1.5);
-        this.vy = random(0, -1);
-        this.alpha = 255;
-        this.accel = random(0, 1);
-        this.radius = random(8, 20);
-        this.r = red;
-        this.g = green;
-        this.b = blue;
-
-    }
-
-    finished() {
-        return this.alpha < 0;
-    }
-
-    update() {
-        this.x += this.vx * this.accel;
-        this.y += this.vy * this.accel;
-        this.alpha -= 5;
-        if (this.radius > 0) {
-            this.radius -= 0.08;
-        }
-        this.r += random(-8, 8);
-        this.g += random(-8, 8);
-        this.b += random(-8, 8);
-    }
-
-    show() {
-        noStroke();
-        fill(this.r, this.g, this.b, this.alpha);
-        ellipse(this.x, this.y, this.radius);
-    }
-
-}
-
-function particleDraw(jointX, jointY, red, green, blue) {
+function TriangleDraw(jointX, jointY, red, green, blue) {
     background(0, 20);
-    for (let i = 0; i < 1; i++) { //how many particles at one time
-        let p = new Particle(jointX, jointY, red, green, blue);
-        particleSmoke.push(p);
-    }
-    for (let i = particleSmoke.length - 1; i >= 0; i--) {
-        particleSmoke[i].update();
-        particleSmoke[i].show();
-        if (particleSmoke[i].finished()) {
-            // remove this particle
-            particleSmoke.splice(i, 2);
+    allTriangleLines.push(new TriangleLine(jointX, jointY));
+
+    for (var i = allTriangleLines.length - 1; i > -1; i--) {
+        allTriangleLines[i].update();
+        allTriangleLines[i].show();
+
+        if (allTriangleLines[i].vel.mag() < 0.01) {
+            allTriangleLines.splice(i, 5);
         }
     }
+
 }
+
 
 function redLightTimer() {
     if (frameCount % 60 == 0 && redLightTime > -1) {
