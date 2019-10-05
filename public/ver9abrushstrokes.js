@@ -24,7 +24,7 @@ var greenLightTime = greenLightTimeReset; // variable used to reger to green lig
 
 
 function preload() {
-    gif_createImg = createImg("vegetables.gif");
+    gif_createImg = createImg("greenman.gif");
 }
 
 
