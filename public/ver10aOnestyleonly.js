@@ -168,9 +168,9 @@ function interpretData(bodyFrame) {
 
                 }
 
-            } else {
+            } else { //if the index number is not currently being tracked, and it is present in trackedArray
                 var index = trackedArray.indexOf(parseInt(i));
-                if (index !== -1) {
+                if (index !== -1) { //if it is not present, index number will be -1
                     trackedArray.splice(index, 1);
                     colourArray.splice(index * 3, 3);
                 }
