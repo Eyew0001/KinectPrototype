@@ -75,6 +75,7 @@ function draw() {
     if (trackedArray.length == 0) {
         particleSmoke = [];
         strokeLineArray = [];
+        sinWaveArray = [];
         background(0, 30);
         // console.log("length is 0");
         // stroke(360, 360, 360);
