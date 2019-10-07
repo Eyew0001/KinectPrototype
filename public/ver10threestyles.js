@@ -13,7 +13,7 @@ var strokeLineArray = []; // declare array for storing particles
 
 var sinWaveArray = [];
 
-var redLightTimeReset = 102; // time left for red light
+var redLightTimeReset = 10; // time left for red light
 
 var greenLightTimeReset = 4; // time left for green light
 
@@ -24,7 +24,8 @@ var greenLightTime = greenLightTimeReset; // variable used to reger to green lig
 
 
 function preload() {
-    gif_createImg = createImg("greenman.gif");
+    gif_createImg = createImg("greenmanblack.gif");
+
 }
 
 
@@ -37,12 +38,6 @@ function setup() {
     background(0);
 
 
-    t = 0;
-    R = 30;
-    D = 20;
-    p = createVector();
-    v = createVector();
-    m = createVector();
 
 }
 
@@ -60,14 +55,15 @@ function draw() {
 
     // swapping between green and red light timer text
     // timertext continues to change even if no one is in view
-    var timertext = "redlight time left: " + redLightTimer();
+    var timertext = "Time until green light: " + redLightTimer();
     if (redLightTime == -1) {
         background(0, 45);
-        timertext = "CROSS!! greenlight time left: " + greenLightTimer();
+        timertext = "CROSS!! Crossing time left: " + greenLightTimer();
 
     }
     if (greenLightTime == -1) {
-        timertext = "redlight time left: " + redLightTimer();
+
+        // timertext = "Time until green light: " + redLightTimer();
         redLightTime = redLightTimeReset;
         greenLightTime = greenLightTimeReset;
     }
@@ -93,14 +89,16 @@ function draw() {
     if (redLightTime > -1) { //if light is red show timertext up top
         fill("red");
         textSize(30);
-        text(timertext, width / 2, 100);
+        text(timertext, width / 2, windowHeight * 0.15);
         gif_createImg.hide();
     } else { //if green show crossing text in middle
+        var gifWidth = (windowWidth / gif_createImg.width) * gif_createImg.width / 3;
         fill("green");
         textSize(60);
         textAlign(CENTER);
-        text(timertext, width / 2, height / 2);
-        gif_createImg.position(50, 350);
+        text(timertext, width / 2, windowHeight * 0.15);
+        gif_createImg.position(windowWidth / 2 - gifWidth / 2, windowHeight / 2 - gifWidth / 4);
+        gif_createImg.size(gifWidth, gifWidth);
         gif_createImg.show();
     }
 
@@ -151,12 +149,12 @@ function interpretData(bodyFrame) {
                     // var temp = jointsCombo[j]
                     var index = trackedArray.indexOf(parseInt(i));
 
-                    if (i < 0) {
+                    if (i < 2) {
                         particleDraw(joint.depthX, joint.depthY, colourArray[index * 3], colourArray[(index * 3) + 1], colourArray[(index * 3) + 2]);
                         // console.log("colour " + colourArray[index*3]);
 
-                    } else if (i < 6) {
-                     
+                    } else if (i > 1 && i < 4) {
+
 
                         drawLine(joint.depthX, joint.depthY, colourArray[index * 3], colourArray[(index * 3) + 1], colourArray[(index * 3) + 2]);
                         // console.log(jointsCombo[j][0][0]);
@@ -328,10 +326,10 @@ class sinWaves {
         this.vy = random(0, -1);
         this.alpha = 255;
         this.accel = random(0, 0.1);
-        this.radius = random(8,20);
+        this.radius = random(8, 20);
         this.theta = 0.3;
         this.token = 20;
-        this.tokeny = random(-50,50) 
+        this.tokeny = random(-50, 50)
         this.r = red;
         this.g = green;
         this.b = blue;
@@ -340,14 +338,14 @@ class sinWaves {
 
     update() {
         // if (this.x )
-        this.theta +=0.2;
+        this.theta += 0.2;
 
-        this.x += ((sin((this.theta/1.2)-200) *50 ) * this.accel);
+        this.x += ((sin((this.theta / 1.2) - 200) * 50) * this.accel);
         this.y += this.token * this.accel;
         this.r += random(-8, 8);
         this.g += random(-8, 8);
         this.b += random(-8, 8);
-        
+
         // this.y += cos(60) *20 * this.accel;
         this.alpha -= 1.5;
         if (this.radius > 0) {
