@@ -13,13 +13,19 @@ var strokeLineArray = []; // declare array for storing particles
 
 var sinWaveArray = [];
 
-var redLightTimeReset = 25; // time left for red light
+var redLightTimeReset = 10; // time left for red light
 
-var greenLightTimeReset = 4; // time left for green light
+var greenLightTimeReset = 2; // time left for green light
 
 var redLightTime = redLightTimeReset; // variable used to reger to red light time left
 
 var greenLightTime = greenLightTimeReset; // variable used to reger to green light time left
+
+var scrollPos; // first scrolling text
+
+var scrollPos2; // second scrolling text
+
+var scroll1End = false; // don't start second scrolling text until first one has finished
 
 
 
@@ -37,6 +43,10 @@ function setup() {
     ctx = createCanvas(windowWidth, windowHeight);
     background(0);
 
+    scrollPos = windowWidth + 300;
+
+    scrollPos2 = windowWidth + 300;
+
 
 
 }
@@ -51,54 +61,84 @@ function draw() {
 
     // black rectangle background for text so text is not affected by the fading background
     fill(0);
-    rect(0, 0, width, 120);
+    rect(0, 0, width, 130);
 
     // swapping between green and red light timer text
     // timertext continues to change even if no one is in view
-    var timertext = "Time until green light: " + redLightTimer();
+    var timertext = redLightTimer();
     if (redLightTime == -1) {
-        background(0, 45);
-        timertext = "CROSS!! Crossing time left: " + greenLightTimer();
+        background(0);
+        timertext = greenLightTimer();
 
     }
-    if (greenLightTime == -1) {
-
-        // timertext = "Time until green light: " + redLightTimer();
+    if (greenLightTime == -1) { // if green countdown finish, reset both red and green
         redLightTime = redLightTimeReset;
         greenLightTime = greenLightTimeReset;
     }
 
     // if no body is in view then show screensaver text
     if (trackedArray.length == 0) {
-        particleSmoke = [];
+        particleSmoke = []; // reset and empty arrays if no one is there
         strokeLineArray = [];
         sinWaveArray = [];
+
         background(0, 30);
-        // console.log("length is 0");
-        // stroke(360, 360, 360);
         textStyle(BOLD);
         textSize(60);
-        if (redLightTime != -1) {
+        if (redLightTime != -1) { // if no one there and still red light
+            background(0);
             fill("white");
             textAlign(CENTER);
             text("Wave your hands to begin", width / 2, height / 2);
+        }
+
+    } else { // if people are tracked, AND is red light is still on
+        if (redLightTime > -1) { 
+            fill("white");
+            textAlign(CENTER);
+            textSize(50);
+            scrollingText();
+            text("Wave your hands to draw", scrollPos, 100); // two scrolling texts for continuous look
+            text("Wave your hands to draw", scrollPos2, 100);
         }
 
     }
 
     // regardless of if body is in view or not
     if (redLightTime > -1) { //if light is red show timertext up top
-        fill("red");
+        fill("black");
+        rect(windowWidth - 200, 0, 180, 180); // black rectangle behind red timer so text isn't seen going through it
+
         textSize(30);
-        text(timertext, width / 2, 100);
+        fill("black");
+        stroke("red");
+        strokeWeight(10);
+        ellipse(windowWidth - 120, 100, 120, 120); // red timer circle
+
+        noStroke();
+        fill("red");
+        textSize(70);
+        text(timertext, windowWidth - 120, 123); // red countdown numbers
+
         gif_createImg.hide();
-    } else { //if green show crossing text in middle
+
+    } else { //if green show crossing animation
+        background(0);
         var gifWidth = (windowWidth / gif_createImg.width) * gif_createImg.width / 3;
+
+        stroke("green");
+        strokeWeight(15);
+        noFill();
+        ellipse(windowWidth / 2, 150, 200, 200); // green timer circle
+
+        noStroke();
         fill("green");
-        textSize(60);
+        textSize(130);
         textAlign(CENTER);
-        text(timertext, width / 2, 100);
-        gif_createImg.position(windowWidth / 2 - gifWidth / 2, windowHeight / 2 - gifWidth / 4);
+        text(timertext, width / 2, 190); //green countdown numbers
+
+        //show gif
+        gif_createImg.position(windowWidth / 2 - gifWidth / 2 - 35, windowHeight / 2 - gifWidth / 4);
         gif_createImg.size(gifWidth, gifWidth);
         gif_createImg.show();
     }
@@ -376,15 +416,34 @@ class sinWaves {
 }
 
 function redLightTimer() {
-    if (frameCount % 60 == 0 && redLightTime > -1) {
+    if (frameCount % 60 == 0 && redLightTime > -1) { // countdown red timer until 0
         redLightTime--;
     }
     return redLightTime;
 }
 
 function greenLightTimer() {
-    if (frameCount % 60 == 0 && greenLightTime > -1) {
+    if (frameCount % 60 == 0 && greenLightTime > -1) { // countdown green timer until 0
         greenLightTime--;
     }
     return greenLightTime;
+}
+
+function scrollingText() {
+    if (scrollPos > -300) { // scroll first text
+        scrollPos -= 2;
+    } else {
+        scrollPos = windowWidth + 1000; // when reach end start again
+    }
+
+    if (scrollPos < 300) { // if first text reaches more than halfway, raise flag to start second text
+        scroll1End = true;
+
+    }
+    if (scroll1End) { // if flag raised start second text
+        scrollPos2 -= 2;
+    }
+    if (scrollPos2 < -300) {
+        scrollPos2 = windowWidth + 1000; // when reach end start again
+    }
 }

@@ -13,7 +13,7 @@ var strokeLineArray = []; // declare array for storing particles
 
 var sinWaveArray = [];
 
-var redLightTimeReset = 15; // time left for red light
+var redLightTimeReset = 25; // time left for red light
 
 var greenLightTimeReset = 4; // time left for green light
 
@@ -93,14 +93,14 @@ function draw() {
     if (redLightTime > -1) { //if light is red show timertext up top
         fill("red");
         textSize(30);
-        text(timertext, width / 2, windowHeight * 0.15);
+        text(timertext, width / 2, 100);
         gif_createImg.hide();
     } else { //if green show crossing text in middle
         var gifWidth = (windowWidth / gif_createImg.width) * gif_createImg.width / 3;
         fill("green");
         textSize(60);
         textAlign(CENTER);
-        text(timertext, width / 2, windowHeight * 0.15);
+        text(timertext, width / 2, 100);
         gif_createImg.position(windowWidth / 2 - gifWidth / 2, windowHeight / 2 - gifWidth / 4);
         gif_createImg.size(gifWidth, gifWidth);
         gif_createImg.show();
