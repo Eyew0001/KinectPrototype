@@ -22,7 +22,7 @@ var sinWaveArray = []; // declare array for storing particles
 
 var trailDotArray = []; // declare array for drawing trail particles
 
-var redLightTimeReset = 100; // time left for red light
+var redLightTimeReset = 50; // time left for red light
 
 var greenLightTimeReset = 2; // time left for green light
 
@@ -42,6 +42,7 @@ var offsetY = 500; // offset for joint.depthY
 
 function preload() {
     gif_createImg = createImg("greenmanblack.gif");
+    fontRegular = loadFont('FrancoisOne-Regular.ttf');
 
 }
 
@@ -51,7 +52,7 @@ function setup() {
     // var socket = io.connect('10.17.58.115:8000');
 
     socket.on('bodyFrame', interpretData); // listens for incoming messages named “bodyFrame”.
-    ctx = createCanvas(windowWidth, windowHeight);
+    ctx = createCanvas(windowWidth-15, windowHeight-20);
     background(0);
 
     scrollPos = windowWidth + 300; // starting position of scoll text 1
@@ -64,6 +65,7 @@ function setup() {
 function draw() {
 
     noStroke();
+    textFont(fontRegular);
 
     // black rectangle background for text so text is not affected by the fading background
     fill(0);
@@ -96,7 +98,7 @@ function draw() {
             background(0);
             fill("white");
             textAlign(CENTER);
-            text("Wave your hands to begin", width / 2, height / 2);
+            text("WAVE YOUR HANDS TO BEGIN", width / 2, height / 2);
         }
 
     } else { // if people are tracked, AND is red light is still on
@@ -105,8 +107,8 @@ function draw() {
             textAlign(CENTER);
             textSize(50);
             scrollingText();
-            text("Wave your hands to draw", scrollPos, 100); // two scrolling texts for continuous look
-            text("Wave your hands to draw", scrollPos2, 100);
+            text("WAVE YOUR HANDS TO DRAW", scrollPos, 100); // two scrolling texts for continuous look
+            text("WAVE YOUR HANDS TO DRAW", scrollPos2, 100);
         }
 
     }
@@ -114,7 +116,7 @@ function draw() {
     // regardless of if body is in view or not
     if (redLightTime > -1) { //if light is red show timertext up top
         fill("black");
-        rect(windowWidth - 200, 0, 180, 180); // black rectangle behind red timer so text isn't seen going through it
+        rect(windowWidth - 200, 0, 190, 180); // black rectangle behind red timer so text isn't seen going through it
 
         textSize(30);
         fill("black");
