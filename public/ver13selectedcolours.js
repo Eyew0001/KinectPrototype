@@ -3,10 +3,12 @@ var ctx;
 
 var trackedArray = []; // stores index number of bodies that are tracked
 
-var colourArray = []; // stores rgb values that are randomised for each person
+//violet, darkturquoise, palegreen(adjusted), steelblue, mediumorchid, lightskyblue, chocolate
+var setColoursArray = [238, 130, 238, 0, 206, 209, 152, 231, 152, 70, 130, 180, 186, 85, 211, 135, 206, 250, 210, 105, 30];
 
-//deep pink, darkturquoise, lime, lightpink, mediumorchid, lightskyblue, palevioletred, yellow, lightsalmon
-var colourArray1 = [255, 20, 147, 0, 206, 209, 0, 255, 0, 255, 182, 193, 186, 85, 211, 135, 206, 250, 219, 112, 147, 255, 255, 0, 255, 160, 122];
+// var indexColourArray = [];
+
+var colourArray = []; // stores rgb values being used from setColoursArray
 
 var trailColourArray = ["aqua", "magenta", "springgreen", "yellow", "orange", "plum"]; // possible trail colours
 
@@ -173,37 +175,27 @@ function interpretData(bodyFrame) {
             if (bodyFrame.bodies[i].tracked == true) {
                 if (!trackedArray.includes(i)) { // if new body is in view add index to the array
                     trackedArray.push(i);
-                    // console.log("pushed: " + i);
 
-                    if (trackedArray.length == 1) { // if first person to be tracked
-                        // make new randomised colours for that person and store in colour array
-                        r = Math.round(random(40, 360) * 10) / 10;
-                        g = Math.round(random(40, 360) * 10) / 10;
-                        b = Math.round(random(40, 360) * 10) / 10;
-                        colourArray.push(r);
-                        colourArray.push(g);
-                        colourArray.push(b);
+                    var index1 = Math.round(random(0, 6));
+                    // // console.log("pushed: " + i);
+                    // if (!indexColourArray.includes(index1)) {
+                    //     indexColourArray.push(index1);
+                    // }
+                    // else {
+                    //     index1 = Math.round(random(0, 6));
+                    //     indexColourArray.push(index1);
+                    // }
+                    
+                    // console.log(random(-8,8));
+                    // index1 = 5 ;
 
-                    } else { // if not first person to be tracked
-                        var index = trackedArray.indexOf(parseInt(i));
-                        index = index - 1;
-                        if (colourArray[index * 3] > 340) { // if last person's colour is higher than 340, bring back down to 40
-                            r = Math.round(random(40, 360) * 10) / 10;
-                            g = Math.round(random(40, 360) * 10) / 10;
-                            b = Math.round(random(40, 360) * 10) / 10;
-                            colourArray.push(r);
-                            colourArray.push(g);
-                            colourArray.push(b);
-                        } else { // if not higher than 40, make new random number between last person's colour and 360
-                            r = Math.round(random(colourArray[index * 3], 360) * 10) / 10;
-                            g = Math.round(random(colourArray[index * 3 + 1], 360) * 10) / 10;
-                            b = Math.round(random(colourArray[index * 3 + 2], 360) * 10) / 10;
-                            colourArray.push(r);
-                            colourArray.push(g);
-                            colourArray.push(b);
-                        }
-
-                    }
+                    // make new randomised colours for that person and store in colour array
+                    r = setColoursArray[index1 * 3];
+                    g = setColoursArray[(index1 * 3) + 1];
+                    b = setColoursArray[(index1 * 3) + 2];
+                    colourArray.push(r);
+                    colourArray.push(g);
+                    colourArray.push(b);
 
 
                 }
@@ -214,7 +206,7 @@ function interpretData(bodyFrame) {
                     var joint = bodyFrame.bodies[i].joints[jointNums[j]]; // get index number of joint from the joint array
 
                     // offset joint positions
-                    joint.depthX *= offsetX; 
+                    joint.depthX *= offsetX;
                     joint.depthY *= offsetY;
 
                     // fill('pink');
@@ -223,8 +215,9 @@ function interpretData(bodyFrame) {
                     // console.log(trailColourArray[i]);
                     drawTrail(joint.depthX, joint.depthY, i); // draw trail
                     // var temp = jointsCombo[j]
+                    // console.log(i);
                     var index = trackedArray.indexOf(parseInt(i));
-
+                    
 
                     if (i < 2) {
                         particleDraw(joint.depthX, joint.depthY, colourArray[index * 3], colourArray[(index * 3) + 1], colourArray[(index * 3) + 2]);
