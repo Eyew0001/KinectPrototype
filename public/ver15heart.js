@@ -25,9 +25,9 @@ var trailDotArray = []; // declare array for drawing trail particles
 
 var heartArray = []; // declare array for hearts
 
-var redLightTimeReset = 10; // time left for red light
+var redLightTimeReset = 30; // time left for red light
 
-var greenLightTimeReset = 2; // time left for green light
+var greenLightTimeReset = 10; // time left for green light
 
 var redLightTime = redLightTimeReset; // variable used to reger to red light time left
 
@@ -154,13 +154,13 @@ function draw() {
         stroke("green");
         strokeWeight(15);
         noFill();
-        ellipse(width / 2, 150, 200, 200); // green timer circle
+        // ellipse(width / 2, 150, 200, 200); // green timer circle
 
         noStroke();
         fill("green");
-        textSize(150);
+        textSize(190);
         textAlign(CENTER);
-        text(timertext, width / 2, 200); //green countdown numbers
+        text(timertext, width / 2, 240); //green countdown numbers
 
         //show gif
         gif_createImg.position(windowWidth / 2 - gifWidth / 2 - 35, windowHeight / 2 - gifWidth / 4);
@@ -579,7 +579,7 @@ class heart {
 
     //coding train for heart function
     show() {
-        fill("red");
+        fill("#e0245e");
         beginShape();
         for (var a = 0; a < TWO_PI; a += 0.01) {
             var r = this.r;
