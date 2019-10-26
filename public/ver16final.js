@@ -97,7 +97,6 @@ function draw() {
         strokeLineArray = [];
         sinWaveArray = [];
         trailDotArray = [];
-        heartArray = [];
 
         // background(0, 100);
         textStyle(BOLD);

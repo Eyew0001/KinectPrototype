@@ -99,7 +99,6 @@ function draw() {
         trailDotArray = [];
         heartArray = [];
 
-        // background(0, 100);
         textStyle(BOLD);
         textSize(60);
         if (greenLightTime == greenLightTimeReset) { // if no one there and still red light
@@ -184,7 +183,7 @@ var b;
 //Inside the interpretData function we can pass in the a variable which will contain the received
 // message, which is the JSON formatted skeleton data in our case:
 function interpretData(bodyFrame) {
-
+background(0);
     if (redLightTime != -1) {
         // console.log(trackedArray);
 
@@ -318,7 +317,7 @@ class Particle {
 }
 
 function particleDraw(jointX, jointY, red, green, blue) {
-    background(0, 100);
+    // background(0, 0);
     for (let i = 0; i < 1; i++) { //how many particles at one time
         let p = new Particle(jointX, jointY, red, green, blue);
         particleSmoke.push(p);
@@ -376,7 +375,7 @@ class StrokeLines {
 }
 
 function strokeDraw(jointX, jointY, red, green, blue) {
-    background(0, 100);
+    // background(0, 0);
     for (let i = 0; i < 1; i++) { //how many particles at one time
         let p = new StrokeLines(jointX, jointY, red, green, blue);
         strokeLineArray.push(p);
@@ -393,7 +392,7 @@ function strokeDraw(jointX, jointY, red, green, blue) {
 
 function drawLine(jointX, jointY, red, green, blue) {
 
-    background(0, 100);
+    // background(0, 0);
     for (let i = 0; i < 1; i++) { //how many particles at one time
         let p = new sinWaves(jointX, jointY, red, green, blue);
         sinWaveArray.push(p);
@@ -499,7 +498,7 @@ class trailDot {
 
 function drawTrail(jointX, jointY, index) {
 
-    background(0, 100);
+    // background(0, 0);
     for (let i = 0; i < 1; i++) { //how many particles at one time
         let p = new trailDot(jointX, jointY, index);
         trailDotArray.push(p);
@@ -530,7 +529,7 @@ function drawTrail(jointX, jointY, index) {
 
 function drawHeart() {
 
-    background(0, 100);
+    // background(0, 0);
     if ((trailDotArray.length > 1)) {
         // get distance difference between left and right hand x and y coordinates
         var xDiff = Math.abs((trailDotArray[trailDotArray.length - 1].x) - (trailDotArray[trailDotArray.length - 2].x));
@@ -542,7 +541,7 @@ function drawHeart() {
 
         // if distance for x and y is less than 10
         if ((xDiff < 20) && (yDiff < 20)) {
-            background(0, 100);
+            // background(0, 0);
             for (let i = 0; i < 1; i++) { //how many particles at one time
                 let p = new heart(xAvg, yAvg);
                 heartArray.push(p);
