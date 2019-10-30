@@ -22,7 +22,7 @@ var trailDotArray = []; // declare array for drawing trail particles
 
 var heartArray = []; // declare array for hearts
 
-var redLightTimeReset = 100; // time left for red light
+var redLightTimeReset = 40; // time left for red light
 
 var greenLightTimeReset = 11; // time left for green light (must be +1 desired amount)
 
@@ -30,12 +30,14 @@ var redLightTime = redLightTimeReset; // variable used to reger to red light tim
 
 var greenLightTime = greenLightTimeReset; // variable used to reger to green light time left
 
-var offsetX = 2000; // offset for joint.depthX
+var likesCount = 0;
 
-var offsetY = 1000; // offset for joint.depthY
+var offsetX = 1200; // offset for joint.depthX
+
+var offsetY = 600; // offset for joint.depthY
 
 function preload() {
-    gif_createImg = createImg("greenmanblack.gif");
+    gif_createImg = createImg("greenmanae.gif");
     fontRegular = loadFont('FrancoisOne-Regular.ttf');
 }
 
@@ -53,13 +55,13 @@ function draw() {
     textFont(fontRegular);
 
     // black rectangle background for text so text is not affected by the fading background
-    fill(0);
+    fill("#030303");
     rect(0, 0, width, 130);
 
     // swapping between green and red light timer text, timertext continues to change even if no one is in view
     var timertext = redLightTimer();
     if (redLightTime == -1) {
-        background(0);
+        background("#030303");
         timertext = greenLightTimer();
 
     }
@@ -80,7 +82,7 @@ function draw() {
        
         if (greenLightTime == greenLightTimeReset) { // if no one there and still red light
             textSize(30);
-            fill("black");
+            fill("#030303");
             stroke("red");
             strokeWeight(30);
             ellipse(width / 2, height / 2, 500, 500); // red timer circle
@@ -94,7 +96,7 @@ function draw() {
 
     } else { // if people are tracked, AND is red light is still on
         if (redLightTime > -1) {
-            fill("black");
+            fill("#030303");
             rect(windowWidth - 200, 0, 190, 180); // black rectangle behind red timer so text isn't seen going through it
 
             textSize(30);
@@ -106,6 +108,12 @@ function draw() {
             fill("red");
             textSize(70);
             text(timertext, windowWidth - 120, 123); // red countdown numbers
+
+            textSize(50);
+            text("Likes: " + likesCount, 180, 80); // clap count
+
+            // fill("white");
+            // text("Wave to Draw", windowWidth/2-50, 80); // instructions
         }
 
     }
@@ -128,6 +136,8 @@ function draw() {
         gif_createImg.position(windowWidth / 2 - gifWidth / 2 - 35, windowHeight / 2 - gifWidth / 4);
         gif_createImg.size(gifWidth, gifWidth);
         gif_createImg.show();
+
+        likesCount = 0;
     }
 }
 
@@ -140,7 +150,7 @@ var b;
 //Inside the interpretData function we can pass in the a variable which will contain the received
 // message, which is the JSON formatted skeleton data in our case:
 function interpretData(bodyFrame) {
-background(0);
+background("#030303");
     if (redLightTime != -1) {
 
         for (var i = 0; i < bodyFrame.bodies.length; i++) {
@@ -451,6 +461,7 @@ function drawHeart() {
 
         // if distance for x and y is less than 10
         if ((xDiff < 20) && (yDiff < 20)) {
+            likesCount++;
             for (let i = 0; i < 1; i++) { //how many particles at one time
                 let p = new heart(xAvg, yAvg);
                 heartArray.push(p);
