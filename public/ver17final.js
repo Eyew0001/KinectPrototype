@@ -109,6 +109,7 @@ function draw() {
             textSize(70);
             text(timertext, windowWidth - 120, 123); // red countdown numbers
 
+            fill("#e0245e");
             textSize(50);
             text("Likes: " + likesCount, 180, 80); // clap count
 
